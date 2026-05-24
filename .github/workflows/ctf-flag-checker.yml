@@ -7,7 +7,7 @@ on:
 jobs:
   check_flag:
     runs-on: ubuntu-latest
-    if: contains(github.event.issue.title, 't474{')
+    if: "contains(github.event.issue.title, 't474{')"
 
     permissions:
       issues: write
