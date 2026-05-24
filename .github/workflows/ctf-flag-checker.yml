@@ -27,7 +27,6 @@ jobs:
             const title = issue.title || '';
             const content = title + ' ' + body;
             const user = issue.user.login;
-
             const FLAG = 't474{g4Du_0f_the_c0d3}';
 
             if (!content.includes(FLAG)) {
@@ -35,13 +34,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `\`\`\`
-SYSTEM_STATUS: ACCESS_DENIED
-FLAG: INVALID
-\`\`\`
-
-Eso no es lo que buscas.
-Vuelve a la imagen. Mirá más profundo.`
+                body: '```\nSYSTEM_STATUS: ACCESS_DENIED\nFLAG: INVALID\n```\n\nEso no es lo que buscas.\nVuelve a la imagen. Mira más profundo.'
               });
               await github.rest.issues.update({
                 owner: context.repo.owner,
@@ -53,7 +46,6 @@ Vuelve a la imagen. Mirá más profundo.`
               return;
             }
 
-            // Flag correcta
             const { data: fileData } = await github.rest.repos.getContent({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -62,18 +54,12 @@ Vuelve a la imagen. Mirá más profundo.`
 
             const content_decoded = Buffer.from(fileData.content, 'base64').toString();
 
-            // Verificar si ya está en el Hall
-            if (content_decoded.includes(`@${user}`)) {
+            if (content_decoded.includes('@' + user)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 issue_number: issue.number,
-                body: `\`\`\`
-SYSTEM_STATUS: DUPLICATE_ENTRY
-\`\`\`
-
-Ya estás en el Hall, @${user}.
-No se puede entrar dos veces al mismo lugar.`
+                body: '```\nSYSTEM_STATUS: DUPLICATE_ENTRY\n```\n\nYa estás en el Hall, @' + user + '.\nNo se puede entrar dos veces al mismo lugar.'
               });
               await github.rest.issues.update({
                 owner: context.repo.owner,
@@ -84,26 +70,26 @@ No se puede entrar dos veces al mismo lugar.`
               return;
             }
 
-            // Agregar al Hall
             const now = new Date().toISOString().split('T')[0];
-            const entry = `| ${user.length} | @${user} | ${now} |`;
+            const entry = '| ' + (content_decoded.match(/\|\s*\d+\s*\|/g) || []).length + ' | @' + user + ' | ' + now + ' |';
             const updated = content_decoded.replace(
               '| — | *esperando al primero* | — |',
               entry
-            ).replace(
-              /(\| \d+ \| @.+ \| .+ \|)\n(\|---)/,
-              (match, last, sep) => {
-                const num = parseInt(last.split('|')[1].trim()) + 1;
-                return `${last}\n| ${num} | @${user} | ${now} |\n${sep}`;
-              }
             );
+
+            const finalContent = content_decoded.includes('esperando al primero')
+              ? updated
+              : content_decoded.replace(
+                  /(\| \d+ \| @\S+ \| \S+ \|)\n(\|---)/,
+                  '$1\n' + entry + '\n$2'
+                );
 
             await github.rest.repos.createOrUpdateFileContents({
               owner: context.repo.owner,
               repo: context.repo.repo,
               path: 'HALL_OF_LUMINOUS.md',
-              message: `[CTF] ${user} joined the Hall of Luminous`,
-              content: Buffer.from(updated).toString('base64'),
+              message: '[CTF] ' + user + ' joined the Hall of Luminous',
+              content: Buffer.from(finalContent).toString('base64'),
               sha: fileData.sha
             });
 
@@ -111,15 +97,7 @@ No se puede entrar dos veces al mismo lugar.`
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: issue.number,
-              body: `\`\`\`
-SYSTEM_STATUS: ACCESS_GRANTED
-CLEARANCE_LEVEL: LUMINOUS
-IDENTITY: ${user}
-\`\`\`
-
-Basta de mirar mi código. El hecho de que estés leyendo esto significa que tienes los ojos abiertos en un mundo de ciegos digitales. Enhorabuena, descifraste el secreto. Ahora guarda la flag, cierra la terminal remota y ve a encriptar tus propias llaves locales antes de que la matriz te borre del mapa.
-
-Tu nombre ya está en el [Hall of Luminous](../blob/main/HALL_OF_LUMINOUS.md).`
+              body: '```\nSYSTEM_STATUS: ACCESS_GRANTED\nCLEARANCE_LEVEL: LUMINOUS\nIDENTITY: ' + user + '\n```\n\nBasta de mirar mi código. El hecho de que estés leyendo esto significa que tienes los ojos abiertos en un mundo de ciegos digitales. Enhorabuena, descifraste el secreto. Ahora guarda la flag, cierra la terminal remota y ve a encriptar tus propias llaves locales antes de que la matriz te borre del mapa.\n\nTu nombre ya está en el [Hall of Luminous](../blob/main/HALL_OF_LUMINOUS.md).'
             });
 
             await github.rest.issues.update({
