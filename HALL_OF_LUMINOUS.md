@@ -22,7 +22,7 @@ Merecen estar aquí.
 
 | # | handle | timestamp |
 |---|--------|-----------|
-| — | *esperando al primero* | — |
+| 0 | @t474-r0b07 | 2026-05-24 |
 
 ---
 
