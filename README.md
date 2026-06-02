@@ -33,16 +33,16 @@ PARANOIA_LEVEL: OPTIMAL (100%)
 00_setup/
     └── ssh-keys.md          → dejar de ser el portero de tu propio proyecto
 
-01_local/           [en construcción]
+01_local/
     └── estructura-repo.md   → un repo que no se convierte en cajón de sastre
 
-02_remote/          [en construcción]
+02_remote/
     └── origins.md           → qué es exactamente lo que viaja cuando haces push
 
-03_branches/        [en construcción]
+03_branches/
     └── conflictos.md        → cuando dos versiones del mismo archivo se pelean
 
-04_github/          [en construcción]
+04_github/
     └── pages.md             → tu repo como sitio. sin hosting de terceros.
     └── actions.md           → automatizar lo que haces a mano todos los días
 
