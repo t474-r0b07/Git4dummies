@@ -161,7 +161,7 @@ El siguiente problema es más sutil:
 dos semanas después de crearlo?
 
 ```
-→ siguiente: 01_local/estructura-repo.md
+→ siguiente: 01_estructura-repo.md
 ```
 
 ---
