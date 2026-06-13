@@ -1,89 +1,78 @@
-# git4dummies :: Automatización — cuando la máquina hace el trabajo aburrido
+```bash
+$ echo $SITUACION
+> alguien hizo push a main
+> nadie corrió los tests
+> el deploy salió igual
+> producción está rota
+> el equipo busca al culpable
 
-> `[SYS] Push detected on branch: main`  
-> `[SYS] Triggering workflow: ci.yml`  
-> `[SYS] Running tests... ✓`  
-> `[SYS] Building Docker image... ✓`  
-> `[SYS] Deploying to production... ✓`  
-> `[SYS] Human intervention required: 0`  
-> `[SYS] Time saved: always`
+$ echo $PREGUNTA
+> ¿por qué el proceso de validación depende
+> de que alguien se acuerde de ejecutarlo
+> cuando puede ejecutarse solo?
+```
 
 ---
 
-## 0x00 :: Qué es la automatización en GitHub
+## `> [EL MOMENTO]`
 
-GitHub tiene un sistema llamado **GitHub Actions** que permite ejecutar código automáticamente cuando ocurre algo en tu repositorio.
+Terminaste. Hiciste push. Funcionaba.
+
+Tres horas después alguien reporta que algo está roto.
+Revisás el historial.
+El bug entró con tu push.
+Los tests lo hubieran detectado.
+Nadie los corrió.
+
+No porque nadie supiera cómo.
+Sino porque nadie se acordó.
+Y en el flujo de trabajo real,
+"acordarse" no es un mecanismo de control — es un punto de falla.
+
+La automatización existe para sacar la memoria humana de los procesos críticos.
+
+---
+
+## `> [RECON]`
+
+GitHub Actions es un sistema que ejecuta código automáticamente cuando algo ocurre en tu repositorio.
 
 Ese "algo" puede ser:
-- Un push a main
-- La apertura de un Pull Request
-- La creación de un Issue
-- Un schedule (como un cron job)
-- Un click manual en la interfaz
 
-El código que se ejecuta puede hacer cualquier cosa: correr tests, construir la app, desplegar a producción, enviar notificaciones, cerrar issues viejos, o revisar código con IA.
+```
+push a main              →  cada vez que llega código nuevo
+apertura de un PR        →  antes de que alguien revise
+schedule (cron)          →  a una hora específica, todos los días
+click manual             →  cuando vos decidís ejecutarlo
+creación de un release   →  cuando publicás una versión
+```
+
+El código que se ejecuta puede hacer cualquier cosa que hagas en una terminal:
+correr tests, hacer build, deployar, enviar notificaciones,
+cerrar issues viejos, revisar código con IA.
 
 ---
 
-## 0x01 :: El problema que resuelve
-
-Sin automatización, el flujo de trabajo manual se ve así:
+## `> [LOS CONCEPTOS]`
 
 ```
-developer hace push
-  → alguien recuerda correr los tests (o no)
-    → alguien recuerda hacer el build (o no)
-      → alguien recuerda desplegar (o no)
-        → alguien descubre en producción que algo está roto
-          → todos culpan al último en hacer push
-```
-
-Con automatización:
-
-```
-developer hace push
-  → GitHub Actions corre los tests
-    → si pasan: build y deploy automático
-      → si fallan: notificación inmediata, deploy bloqueado
-        → el problema se encuentra en segundos, no en horas
+WORKFLOW   →  el archivo YAML que define qué hacer y cuándo
+               vive en .github/workflows/
+TRIGGER    →  el evento que activa el workflow
+JOB        →  conjunto de pasos que corren en una máquina virtual
+STEP       →  una acción individual dentro de un job
+ACTION     →  bloque reutilizable de lógica (tuyo o de la comunidad)
+RUNNER     →  la máquina virtual donde corre todo
+               GitHub la provee gratis para repos públicos
 ```
 
 ---
 
-## 0x02 :: Conceptos clave
-
-```
-WORKFLOW    El archivo que define qué hacer y cuándo
-TRIGGER     El evento que activa el workflow (push, PR, schedule...)
-JOB         Un conjunto de pasos que corren en una máquina virtual
-STEP        Una acción individual dentro de un job
-ACTION      Un bloque reutilizable de lógica (puede ser tuyo o de la comunidad)
-RUNNER      La máquina virtual donde corren los jobs (GitHub la provee gratis)
-```
-
----
-
-## 0x03 :: Dónde vive un workflow
-
-Los workflows son archivos YAML que viven en:
-
-```
-.github/
-└── workflows/
-    ├── ci.yml          # Integración continua
-    ├── deploy.yml      # Deploy automático
-    └── cleanup.yml     # Tareas de mantenimiento
-```
-
-GitHub los detecta automáticamente. No necesitas configurar nada más.
-
----
-
-## 0x04 :: Tu primer workflow
-
-Este workflow corre tests de Node.js cada vez que alguien hace push o abre un PR:
+## `> [EL PRIMER WORKFLOW]`
 
 ```yaml
+# .github/workflows/ci.yml
+
 name: CI
 
 on:
@@ -95,7 +84,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout del código
         uses: actions/checkout@v4
@@ -112,65 +100,37 @@ jobs:
         run: npm test
 ```
 
-Eso es todo. Cada push a main o PR contra main va a correr este workflow. Si los tests fallan, GitHub lo muestra en el PR y bloquea el merge si así lo configuras.
+Eso es todo.
+Cada push a main o PR contra main ejecuta este workflow.
+Si los tests fallan — GitHub lo muestra en el PR.
+Si configurás branch protection — el merge se bloquea hasta que pasen.
+
+Sin recordatorios. Sin procesos manuales.
+Sin "¿corriste los tests antes de pushear?".
 
 ---
 
-## 0x05 :: Actions de la comunidad
+## `> [INTENTOS]`
 
-No tienes que escribir todo desde cero. El GitHub Marketplace tiene miles de Actions listas para usar.
+<details>
+<summary><code>// el que no automatiza lo repetible, lo repite hasta que lo olvida.</code></summary>
 
-Ejemplos comunes:
+```bash
+# — las credenciales en el YAML
+# nunca pongas API keys, tokens o contraseñas directamente
+# GitHub tiene un sistema de secretos:
+# Repositorio → Settings → Secrets and variables → Actions → New secret
 
-| Action | Qué hace |
-|---|---|
-| `actions/checkout` | Clona tu repositorio en el runner |
-| `actions/setup-node` | Instala Node.js |
-| `actions/setup-python` | Instala Python |
-| `docker/build-push-action` | Construye y sube una imagen Docker |
-| `peaceiris/actions-gh-pages` | Deploy a GitHub Pages |
-| `codecov/codecov-action` | Sube reporte de cobertura de tests |
+# en el workflow:
+- name: Deploy
+  env:
+    API_KEY: ${{ secrets.MI_API_KEY }}
+  run: ./deploy.sh
 
-Se usan con `uses: nombre/action@version` dentro de un step.
+# el valor nunca aparece en los logs
+# GitHub lo enmascara automáticamente
 
----
-
-## 0x06 :: CI/CD — el concepto detrás de la automatización
-
-**CI — Continuous Integration (Integración Continua)**
-Cada cambio que se integra al repositorio pasa por una batería de validaciones automáticas. El objetivo es detectar problemas lo antes posible.
-
-```
-push → tests → lint → build → ✓ o ✗
-```
-
-**CD — Continuous Delivery / Deployment**
-Si la integración pasa, el código se despliega automáticamente a un entorno (staging, producción).
-
-```
-✓ CI → deploy a staging → (aprobación manual) → deploy a producción
-```
-
-O completamente automático:
-
-```
-✓ CI → deploy directo a producción
-```
-
-Qué tan automatizado llega el flujo depende del nivel de confianza en los tests y del apetito al riesgo del equipo.
-
----
-
-## 0x07 :: Bots — automatización a nivel de Issues y PRs
-
-Además de Actions, existen bots que se integran a GitHub y automatizan la gestión del repositorio.
-
-**Dependabot** (incluido en GitHub):
-- Detecta dependencias desactualizadas
-- Abre PRs automáticos para actualizarlas
-- Configurable por archivo: npm, pip, Docker, etc.
-
-```yaml
+# — Dependabot: el que parchea sin que lo llamen
 # .github/dependabot.yml
 version: 2
 updates:
@@ -178,53 +138,85 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+# abre PRs automáticos para actualizar dependencias
+# vos revisás, aprobás o rechazás
+# sin revisar manualmente cada semana qué está desactualizado
+
+# — CodeRabbit y similares
+# un bot que revisa código cuando se abre un PR
+# no hace linting — razona sobre el código con un LLM
+# detecta bugs, sugiere mejoras, identifica patrones problemáticos
+# es exactamente lo que viste en el post de Midudev:
+# diff del PR → LLM → comentarios vía API de GitHub
+# no es magia, es un workflow con pasos extras
 ```
 
-**Stale bot:**
-- Cierra Issues y PRs que llevan tiempo sin actividad
-- Útil para mantener el backlog limpio
-
-**CodeRabbit y similares:**
-- Revisan código automáticamente cuando se abre un PR
-- Detectan bugs, sugieren mejoras, identifican patrones problemáticos
-- Usan LLMs para razonar sobre el código, no solo para hacer linting
-
-Esto es exactamente lo que viste en el post de Midudev. No es magia — es un bot con acceso al diff del PR que le pasa el código a un modelo y devuelve los comentarios vía API de GitHub.
+</details>
 
 ---
 
-## 0x08 :: Variables y secretos
+## `> [LO QUE NO TE DICEN]`
 
-Los workflows frecuentemente necesitan credenciales: API keys, tokens de deploy, contraseñas.
-
-Nunca las pongas directamente en el archivo YAML. GitHub tiene un sistema de secretos:
+CI y CD no son lo mismo aunque siempre aparecen juntos.
 
 ```
-Repositorio → Settings → Secrets and variables → Actions → New repository secret
+CI — Continuous Integration
+cada cambio que entra al repo pasa por validación automática
+tests, lint, build
+el objetivo: detectar problemas antes de que se acumulen
+
+CD — Continuous Delivery / Deployment
+si la integración pasa → el código se despliega automáticamente
+puede ser a staging, a producción, o ambos
+
+push → tests → build → deploy a staging → (aprobación) → deploy a producción
 ```
 
-En el workflow se usan así:
-
-```yaml
-- name: Deploy
-  env:
-    API_KEY: ${{ secrets.MI_API_KEY }}
-  run: ./deploy.sh
-```
-
-El valor del secreto nunca aparece en los logs. GitHub lo enmascara automáticamente.
+Qué tan automatizado llegás depende de cuánto confiás en tus tests.
+Si tus tests no cubren lo suficiente — no automatices el deploy.
+Primero escribís los tests.
+Después les delegás la decisión.
 
 ---
 
-## 0x09 :: Bottom line
+## `> [REFLEXION]`
 
-La automatización no es una feature avanzada para proyectos grandes. Es la diferencia entre un repositorio que funciona como sistema y uno que funciona como carpeta compartida.
+```diff
++ un workflow de CI básico tarda 15 minutos en configurar
++ ahorra horas de debugging manual a lo largo del tiempo
++ Dependabot por npm o pip — siempre, cuesta cero
++ secretos en Settings, nunca en el YAML
++ branch protection + CI = nadie mergea con tests rotos
+- automatizar el deploy sin tests que cubran lo crítico
+  es automatizar la velocidad con que rompés producción
+- runners gratuitos tienen límites en repos privados — revisá el plan
+- un workflow que nunca falla puede ser un workflow que no está probando nada real
+```
 
-Un workflow de CI básico tarda 15 minutos en configurar y ahorra horas de debugging manual a lo largo del tiempo.
+---
 
-Y cuando el bot de review detecta un bug antes de que llegue a producción, nadie tiene que culpar al último en hacer push.
+## `> echo $SIGUIENTE`
+
+Ahora el proyecto tiene memoria (Issues),
+proceso de revisión (PRs y Code Review),
+y validación automática (Actions).
+
+Lo que sigue ya no es configuración — es campo:
+proyectos reales, errores reales, decisiones reales.
 
 ```
-t474-r0b07 | git4dummies series | 2026
-<!-- 6175746f6d61746520746865206d756e64616e652c207468696e6b206f6e207468652073747261746567696320 -->
+→ siguiente: 05_campo/ [en construcción]
 ```
+
+---
+
+```
+████████████████████████████████████████████████
+█                                              █
+█   4ut0m4t3_th3_r3p3t1t1v3              █
+█          th1nk_4b0ut_th3_str4t3g1c          █
+█                                              █
+████████████████████████████████████████████████
+```
+
+> *→ [github.com/t474-r0b07](https://github.com/t474-r0b07)*

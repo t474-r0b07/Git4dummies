@@ -1,174 +1,187 @@
-# git4dummies :: Comments y Code Review — revisar código sin destruir a nadie
+```bash
+$ echo $SITUACION
+> reviewer comenta: "esto está mal"
+> author responde: "funciona en mi máquina"
+> reviewer responde: "no es cómo se hace"
+> author responde: "lleva semanas así sin problemas"
+> PR cerrado sin merge
+> nadie sabe por qué
 
-> `[SYS] Pull Request #73 assigned for review`  
-> `[SYS] Files changed: 14`  
-> `[SYS] Lines added: 312`  
-> `[SYS] Lines removed: 89`  
-> `[SYS] Reviewer mood: unknown`  
-> `[SYS] Proceed with caution`
-
----
-
-## 0x00 :: Qué es un Code Review
-
-Un Code Review es el proceso de leer, analizar y opinar sobre el código de otra persona antes de que se integre al proyecto.
-
-No es una corrección de examen. No es una auditoría. Es una conversación técnica con el objetivo de mejorar el código y distribuir conocimiento.
-
-El resultado puede ser:
-- **Approve** — está bien, se puede mergear
-- **Request changes** — hay cosas que corregir antes
-- **Comment** — solo opiniones, sin bloquear el merge
-
----
-
-## 0x01 :: Por qué importa más allá de encontrar bugs
-
-El review encuentra bugs, sí. Pero eso es el beneficio más obvio y no el más importante.
-
-Los beneficios reales:
-
-**Distribución de conocimiento.** Si solo una persona entiende un módulo, el proyecto tiene un punto de falla humano. El review fuerza a más personas a entender más partes del sistema.
-
-**Consistencia.** Sin review, cada developer escribe en su propio estilo. Con review, el código del proyecto empieza a tener una voz coherente.
-
-**Detección temprana.** Un bug encontrado en review cuesta minutos. El mismo bug encontrado en producción cuesta horas o días.
-
-**Aprendizaje.** Los developers junior aprenden leyendo feedback de developers senior. Los senior aprenden cuando alguien junior pregunta por qué algo está hecho de cierta forma.
-
----
-
-## 0x02 :: Tipos de comentarios en GitHub
-
-En un PR puedes comentar en tres niveles:
-
-**Comentario general** — sobre el PR completo, no sobre código específico.
-```
-"Este approach funciona, pero considera el impacto en performance 
-cuando el dataset crezca."
-```
-
-**Comentario en línea** — sobre una línea específica de código.
-```
-Línea 47: "¿Por qué parseInt y no Number() aquí?"
-```
-
-**Comentario en bloque** — sobre un rango de líneas.
-```
-Líneas 120-135: "Este bloque podría extraerse a una función separada, 
-hace demasiadas cosas a la vez."
+$ echo $PREGUNTA
+> ¿por qué el code review se convierte en debate de ego
+> cuando su único propósito es mejorar el código?
 ```
 
 ---
 
-## 0x03 :: Cómo dar feedback que no destruya la relación
+## `> [EL MOMENTO]`
 
-El código es técnico. El feedback es humano.
+Alguien revisó tu PR.
+El comentario decía: "esto está mal".
 
-**Preguntar en lugar de afirmar:**
-```
-MAL:  "Esto está mal."
-BIEN: "¿Qué pasa si el array llega vacío aquí?"
+No explicaba qué estaba mal.
+No explicaba por qué.
+No proponía cómo mejorarlo.
 
-MAL:  "Deberías usar un Map."
-BIEN: "¿Consideraste usar un Map para esta búsqueda? 
-       Podría ser O(1) en lugar de O(n)."
-```
+Solo: "esto está mal."
 
-**Separar lo bloqueante de lo opcional:**
-```
-[BLOQUEANTE] Esto va a romper si el usuario no está autenticado.
-[SUGERENCIA] Podrías nombrar esta variable más descriptivamente.
-[NITPICK]    Espaciado inconsistente en línea 34.
-```
+Sentiste que te criticaban a vos, no al código.
+Pusiste el comentario en modo defensivo.
+El reviewer lo interpretó como resistencia.
+La conversación escaló.
+El código no mejoró.
 
-**Explicar el por qué:**
-```
-MAL:  "No uses var."
-BIEN: "var tiene scope de función, no de bloque. 
-       Puede causar comportamiento inesperado en loops. 
-       Mejor const o let."
-```
-
-**Reconocer lo bueno:**
-```
-"Este manejo de errores está muy bien pensado."
-```
-
-No es adulación. Es información útil sobre qué mantener.
+El problema no fue el bug.
+Fue que el feedback no era información — era una acusación.
 
 ---
 
-## 0x04 :: Cómo recibir feedback sin ponerte defensivo
+## `> [RECON]`
 
-El feedback es sobre el código, no sobre ti.
+Un Code Review es una conversación técnica con un objetivo:
+mejorar el código antes de que llegue a main.
 
-Reglas prácticas:
+No es una corrección de examen.
+No es una auditoría.
+No es una demostración de quién sabe más.
 
-- Si no entiendes el comentario, pregunta. No asumas.
-- Si no estás de acuerdo, argumenta con datos, no con ego.
-- Si el reviewer tiene razón, agradece y corrige.
-- Si el reviewer está equivocado, explica por qué y llega a un acuerdo.
-- Si es solo una preferencia de estilo sin impacto real, no vale la pena una guerra.
+El resultado puede ser tres cosas:
 
 ```
-DEVELOPER: "Cambié el approach, ¿qué te parece ahora?"
-REVIEWER:  "Mucho mejor. Esto sí escala."
-// así funciona
+Approve          →  está bien, se puede mergear
+Request changes  →  hay cosas que corregir antes
+Comment          →  solo observaciones, no bloquea el merge
+```
+
+La diferencia entre los tres no es gravedad.
+Es si el reviewer considera que el código puede entrar o no.
+
+---
+
+## `> [BREAK]`
+
+La forma en que se escribe un comentario determina si produce un cambio o una discusión.
+
+```
+// lo que no sirve
+"esto está mal"
+"deberías usar un Map"
+"no hagas esto así"
+
+// lo que sirve
+"¿qué pasa si el array llega vacío aquí?"
+"¿consideraste usar un Map? la búsqueda sería O(1) en lugar de O(n)"
+"este approach funciona, pero puede causar problemas si el dataset crece — 
+ ¿qué opinás de extraer esto a una función separada?"
+```
+
+La pregunta obliga a pensar.
+La afirmación produce defensiva.
+La misma información, distinto resultado.
+
+---
+
+## `> [INTENTOS]`
+
+<details>
+<summary><code>// el que no aprende a dar feedback, solo da ruido.</code></summary>
+
+```bash
+# — el comentario que no dice nada
+reviewer: "esto está mal"
+author: "¿qué exactamente?"
+reviewer: "todo"
+# resultado: discusión. sin cambios.
+# error: un comentario sin contexto es ruido documentado
+
+# — separar bloqueante de opcional
+[BLOQUEANTE] esto va a romper si el usuario no está autenticado
+[SUGERENCIA] podrías nombrar esta variable más descriptivamente
+[NITPICK]    espaciado inconsistente en línea 34
+# el author sabe qué tiene que cambiar antes del merge
+# y qué puede ignorar sin consecuencias
+
+# — el feature que nadie usa: Suggestions
+# el reviewer puede proponer el cambio exacto en el comentario:
+# ```suggestion
+# const userEmail = user.email.trim().toLowerCase()
+# ```
+# el author acepta con un clic
+# GitHub crea el commit automáticamente
+# sin copiar. sin pegar. sin salir de la interfaz.
+# lleva años en GitHub. la mayoría sigue escribiendo "podrías cambiar esto a..."
+
+# — Resolved conversations
+# comentario atendido → marcar como Resolved
+# desaparece del feed activo, queda en el historial
+# convención: el author resuelve sus propios comentarios cuando hace el cambio
+# si resolvés sin hacer el cambio — explicás por qué antes de resolverlo
+```
+
+</details>
+
+---
+
+## `> [LO QUE NO TE DICEN]`
+
+El review distribuye conocimiento.
+
+Si solo una persona entiende un módulo —
+el proyecto tiene un punto de falla humano.
+El review fuerza a más personas a entender más partes del sistema.
+
+Un bug encontrado en review cuesta minutos.
+El mismo bug encontrado en producción cuesta horas.
+El mismo bug encontrado por un cliente no tiene precio fijo.
+
+Y hay algo más que nadie menciona:
+el feedback positivo también es información.
+
+```bash
+"este manejo de errores está muy bien pensado"
+```
+
+No es adulación.
+Es documentación de qué mantener.
+Sin eso, el author no sabe si lo que hizo bien fue accidental o intencional.
+
+---
+
+## `> [REFLEXION]`
+
+```diff
++ preguntar en lugar de afirmar — la pregunta informa, la afirmación defiende
++ separar bloqueante de sugerencia — el author sabe qué es urgente y qué no
++ usar Suggestions para cambios pequeños — GitHub crea el commit solo
++ reconocer lo que está bien — también es feedback
+- "esto está mal" sin contexto no es un comentario, es una queja
+- resolver comentarios sin hacer el cambio y sin explicar por qué — rompe la confianza
+- revisar solo para demostrar que sabés más — contamina el proceso para todos
 ```
 
 ---
 
-## 0x05 :: Suggestions — el feature que poca gente usa
+## `> echo $SIGUIENTE`
 
-GitHub permite que el reviewer proponga el cambio exacto directamente en el comentario:
+Ahora el código tiene revisión humana antes de llegar a main.
 
-````
-```suggestion
-const userEmail = user.email.trim().toLowerCase()
+El siguiente problema es de escala:
+¿qué pasa con las cosas que siempre hacés manualmente
+y que siempre vas a olvidar hacer en el peor momento posible?
+
 ```
-````
-
-El autor del PR puede aceptar la sugerencia con un clic y GitHub crea el commit automáticamente. Sin copiar, sin pegar, sin salir de la interfaz.
-
-Para cambios pequeños y obvios, esto ahorra tiempo a ambos lados.
-
----
-
-## 0x06 :: Resolved conversations
-
-Cuando un comentario fue atendido, se puede marcar como **Resolved**. Desaparece del feed activo pero queda en el historial.
-
-Convención útil: el autor del PR resuelve sus propios comentarios cuando hace el cambio. El reviewer los resuelve cuando son solo observaciones sin acción requerida.
-
-Si resuelves un comentario sin hacer el cambio, explica por qué en una respuesta antes de resolverlo.
-
----
-
-## 0x07 :: Review de un solo reviewer vs. equipo
-
-| Contexto | Recomendación |
-|---|---|
-| Proyecto personal | Sin review obligatorio, pero útil para PRs grandes |
-| Proyecto en pareja | Al menos 1 approval antes de merge |
-| Equipo pequeño (3-5) | 1-2 approvals, rotación de reviewers |
-| Proyecto open source | Maintainer(s) deciden, puede requerir 2+ approvals |
-
-GitHub permite configurar **Branch Protection Rules** para que main no se pueda mergear sin X approvals. Es una configuración de repositorio, no de git.
-
----
-
-## 0x08 :: Bottom line
-
-El code review bien hecho es la diferencia entre un proyecto que mejora con el tiempo y uno que acumula deuda técnica silenciosa.
-
-No requiere ser un experto para revisar. Requiere leer con atención y preguntar cuando algo no está claro.
-
-El siguiente tema: **Automatización** — GitHub Actions, bots y cómo hacer que la máquina haga el trabajo aburrido.
+→ siguiente: 07_automatizacion.md
+```
 
 ---
 
 ```
-t474-r0b07 | git4dummies series | 2026
-<!-- 636f6465207265766965772069732061206d6972726f72206e6f7420612077656170 6f6e -->
+████████████████████████████████████████████████
+█                                              █
+█   c0d3_r3v13w_1s_4_c0nv3rs4t10n            █
+█          n0t_4_c0rr3ct10n                   █
+█                                              █
+████████████████████████████████████████████████
 ```
+
+> *→ [github.com/t474-r0b07](https://github.com/t474-r0b07)*

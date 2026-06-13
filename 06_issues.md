@@ -1,116 +1,149 @@
-# git4dummies :: Issues — el tablero de quejas que sí funciona
+```bash
+$ echo $SITUACION
+> alguien reportó un bug por WhatsApp
+> el mensaje se perdió entre memes
+> el bug llegó a producción
+> nadie recuerda quién lo reportó
+> nadie recuerda cuándo
 
-> `[SYS] Repository loaded`  
-> `[SYS] Open issues: 847`  
-> `[SYS] Assigned to you: 0`  
-> `[SYS] Ignored by everyone: 847`  
-> `[SYS] Status: normal`
-
----
-
-## 0x00 :: Qué es un Issue
-
-Un Issue es un registro formal de algo que necesita atención en un proyecto.
-
-Puede ser:
-
-- Un bug: *"El botón de login no funciona en Firefox"*
-- Una mejora: *"Sería útil poder exportar en PDF"*
-- Una pregunta: *"No entiendo cómo configurar el entorno"*
-- Una tarea: *"Actualizar la documentación del módulo X"*
-
-No es un chat. No es un comentario en el código. Es un ticket con historia, responsables, estado y contexto.
-
-GitHub lo llama Issue. Jira lo llama Issue. Linear lo llama Issue. El nombre es estándar porque el concepto es universal.
-
----
-
-## 0x01 :: Por qué existe
-
-Antes de los sistemas de issues, los bugs se reportaban por correo. O por WhatsApp. O en un post-it. O en la memoria de alguien que luego renunció.
-
-El problema no era la falta de información — era que la información no tenía un lugar fijo, no tenía estado, y no sobrevivía a las personas.
-
-Un Issue resuelve eso: **convierte una queja volátil en un objeto persistente con historia**.
-
----
-
-## 0x02 :: Anatomía de un Issue
-
-```
-[TÍTULO]         Descripción corta y específica del problema
-[DESCRIPCIÓN]    Qué pasó, qué se esperaba, cómo reproducirlo
-[LABELS]         Categorías: bug / enhancement / documentation / question
-[ASSIGNEE]       Quién lo va a resolver
-[MILESTONE]      A qué versión o sprint pertenece
-[COMENTARIOS]    Conversación sobre el problema
-[ESTADO]         Open / Closed
+$ echo $PREGUNTA
+> ¿por qué el estado de un proyecto vive
+> en la memoria de las personas
+> y no en el proyecto mismo?
 ```
 
-El título es lo más importante. Un título vago produce un issue inútil.
+---
 
-| Mal título | Buen título |
-|---|---|
-| "No funciona" | "Error 404 al acceder a /dashboard en producción" |
-| "Arreglar login" | "Login falla con contraseñas que tienen caracteres especiales" |
-| "Mejora UI" | "Añadir indicador de carga al botón de submit" |
+## `> [EL MOMENTO]`
+
+Tenías un proyecto funcionando.
+Alguien encontró algo roto.
+Te lo dijo de palabra.
+Lo anotaste mentalmente.
+Tres días después — no lo recordabas.
+
+O peor: lo recordabas, pero no sabías si ya lo habías arreglado,
+si alguien más lo había arreglado,
+o si seguía roto esperando que alguien lo notara de nuevo.
+
+Eso no es gestión de proyecto.
+Es gestión por memoria colectiva degradada.
+Y la memoria colectiva degradada siempre falla en producción.
 
 ---
 
-## 0x03 :: Cómo crear uno
+## `> [RECON]`
 
-En GitHub, dentro de cualquier repositorio:
+Un Issue es un registro formal de algo que necesita atención.
+
+No es un chat.
+No es un comentario en el código.
+No es una nota en un cuaderno.
+
+Es un objeto con estado. Con historia. Con responsable.
+Que existe en el proyecto — no en la cabeza de alguien.
 
 ```
-Repositorio → pestaña "Issues" → botón "New Issue"
+[TÍTULO]       qué está roto o qué se necesita
+[DESCRIPCIÓN]  contexto, pasos para reproducir, comportamiento esperado
+[LABELS]       categoría: bug / enhancement / docs / question
+[ASSIGNEE]     quién lo resuelve
+[MILESTONE]    a qué versión o sprint pertenece
+[ESTADO]       open / closed
 ```
 
-Lo mínimo que necesita tener:
-
-```markdown
-## Descripción
-Qué está pasando exactamente.
-
-## Pasos para reproducir
-1. Ir a...
-2. Hacer clic en...
-3. Ver el error
-
-## Comportamiento esperado
-Qué debería pasar.
-
-## Comportamiento actual
-Qué pasa en realidad.
-
-## Entorno
-- OS: Ubuntu 22.04
-- Versión: 1.3.2
-- Browser: Firefox 120
-```
-
-No necesitas todo esto para un proyecto personal. Sí lo necesitas si trabajas con otras personas.
+La diferencia entre un proyecto que escala
+y uno que colapsa en caos organizado
+no suele ser el código.
+Suele ser si alguien puede encontrar qué está roto,
+quién lo está arreglando,
+y cuándo quedó resuelto.
 
 ---
 
-## 0x04 :: Labels — el sistema de categorías
+## `> [BREAK]`
 
-GitHub trae labels por defecto:
+El título es lo más importante del Issue.
+Un título vago produce un Issue inútil.
 
-| Label | Uso |
-|---|---|
-| `bug` | Algo no funciona como debería |
-| `enhancement` | Propuesta de mejora |
-| `documentation` | Falta o error en docs |
-| `question` | Duda, no necesariamente un problema |
-| `good first issue` | Apto para contribuidores nuevos |
-| `wontfix` | Reportado pero no se va a resolver |
-| `duplicate` | Ya existe otro issue igual |
+```
+// lo que no sirve
+"no funciona"
+"arreglar login"
+"mejora UI"
 
-Puedes crear los tuyos. En proyectos reales es común tener labels como `priority:high`, `area:backend`, `status:blocked`.
+// lo que sirve
+"Error 404 al acceder a /dashboard en producción con usuario sin rol asignado"
+"Login falla cuando la contraseña contiene caracteres especiales (&, %, #)"
+"Añadir indicador de carga al botón de submit para evitar doble click"
+```
+
+La diferencia no es formalidad.
+Es información accionable vs. ruido documentado.
 
 ---
 
-## 0x05 :: El ciclo de vida de un Issue
+## `> [INTENTOS]`
+
+<details>
+<summary><code>// el que no documenta sus problemas, los repite.</code></summary>
+
+```bash
+# — la primera vez
+# alguien dice "creo que hay un bug en el login"
+# abrís un issue: "bug en login"
+# tres días después no sabés qué era exactamente
+# error: el título sin contexto es un recordatorio sin instrucciones
+
+# — intento con más detalle
+# "Login falla con contraseñas que tienen & o % — probado en Chrome y Firefox"
+# ahora sí: reproducible, específico, localizado
+# esto es un Issue
+
+# — cuando hay template
+# GitHub muestra opciones: Bug report / Feature request
+# el contribuidor completa los campos que vos definiste
+# llegás a un Issue con toda la información necesaria
+# sin pedirla manualmente cada vez
+
+# — la conexión que poca gente usa
+$ git commit -m "fix: validación de caracteres especiales — closes #42"
+# GitHub cierra el Issue automáticamente cuando el commit llega a main
+# sin entrar a GitHub. sin buscar el ticket. sin hacer clic en nada.
+```
+
+</details>
+
+---
+
+## `> [LO QUE NO TE DICEN]`
+
+Los labels no son decoración.
+
+Son el sistema de filtrado que te permite encontrar
+todos los bugs abiertos,
+todas las mejoras pendientes,
+todo lo que nadie quiere resolver (`wontfix`),
+todo lo que ya existe (`duplicate`).
+
+```
+bug             →  algo no funciona como debería
+enhancement     →  propuesta de mejora
+documentation   →  falta o error en docs
+question        →  duda, no necesariamente un problema
+good first issue → apto para contribuidores nuevos
+wontfix         →  reportado, descartado, documentado
+duplicate       →  ya existe, referenciado al original
+```
+
+Podés crear los tuyos: `priority:high`, `area:backend`, `status:blocked`.
+
+El sistema de labels es tan útil como la disciplina con que lo usás.
+Si nadie los aplica consistentemente — son decoración.
+
+---
+
+## `> [EL CICLO]`
 
 ```
 OPEN → (trabajo) → CLOSED
@@ -118,66 +151,57 @@ OPEN → (trabajo) → CLOSED
   └──── REOPEN ←───────┘
 ```
 
-Se cierra cuando:
-- El problema fue resuelto
-- Se decidió no resolverlo (`wontfix`)
-- Es duplicado de otro issue
+Se cierra cuando el problema fue resuelto,
+cuando se decidió no resolverlo,
+o cuando es duplicado de otro.
 
-Se reabre cuando:
-- El fix no funcionó
-- Volvió a aparecer en otra versión
+Se reabre cuando el fix no funcionó
+o cuando el problema volvió en otra versión.
 
----
-
-## 0x06 :: Issues y commits — la conexión que ahorra tiempo
-
-Puedes referenciar un issue desde un commit o un Pull Request usando su número:
-
-```bash
-git commit -m "fix: corregir validación de email #42"
-```
-
-Y si usas palabras clave específicas, GitHub cierra el issue automáticamente cuando el commit llega a la rama principal:
-
-```bash
-git commit -m "fix: corregir validación de email — closes #42"
-# También funcionan: fixes, resolves, resolved
-```
-
-Esto es automatización básica que mucha gente no usa y debería.
+Un Issue cerrado no desaparece.
+Queda en el historial.
+Es documentación de lo que estuvo roto
+y de cómo se resolvió.
 
 ---
 
-## 0x07 :: Issue Templates
+## `> [REFLEXION]`
 
-En proyectos con varios contribuidores, tener un template evita que los issues lleguen vacíos o con información inútil.
-
-Se crean en `.github/ISSUE_TEMPLATE/`:
-
+```diff
++ título específico — si no podés reproducirlo desde el título, reescribilo
++ labels consistentes — o no los uses, pero no los uses a medias
++ closes #N en commits — automatización que no cuesta nada configurar
++ templates en .github/ISSUE_TEMPLATE/ — para proyectos con colaboradores
+- "no funciona" no es un Issue, es una queja sin dirección
+- issues sin assignee en equipos → nadie lo resuelve, todos asumen que alguien más lo hará
+- cerrar issues manualmente cuando podés automatizarlo es tiempo que no recuperás
 ```
-.github/
-└── ISSUE_TEMPLATE/
-    ├── bug_report.md
-    └── feature_request.md
-```
-
-GitHub los muestra como opciones cuando alguien va a abrir un issue nuevo. El contribuidor elige el tipo y recibe el formulario con los campos que tú definiste.
 
 ---
 
-## 0x08 :: Bottom line
+## `> echo $SIGUIENTE`
 
-Un issue mal escrito es ruido. Un issue bien escrito es documentación.
+Ahora el proyecto tiene memoria.
+Los problemas tienen estado.
+Las decisiones tienen historia.
 
-La diferencia entre un proyecto que escala y uno que colapsa en caos no suele ser el código. Suele ser si la gente puede encontrar qué está roto, quién lo está arreglando, y cuándo quedó resuelto.
+El siguiente problema es más social:
+¿cómo proponés cambios al proyecto
+sin romper lo que ya funciona
+y sin que nadie tenga que confiar ciegamente en vos?
 
-Los Issues son la respuesta de Git a esa pregunta.
-
-El siguiente tema: **Pull Requests** — cómo proponer cambios sin romper el proyecto de nadie.
+```
+→ siguiente: 05_pull_requests.md
+```
 
 ---
 
 ```
-t474-r0b07 | git4dummies series | 2026
-<!-- 7468652072656174206973737565206973206e6f74207468652062756720697473656c66202d206974277320746865206c61636b206f6620636f6e74657874 -->
+████████████████████████████████████████████████
+█                                              █
+█   4n_1ssu3_w1th0ut_c0nt3xt_1s_just_n01s3   █
+█                                              █
+████████████████████████████████████████████████
 ```
+
+> *→ [github.com/t474-r0b07](https://github.com/t474-r0b07)*
