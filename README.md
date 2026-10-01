@@ -1,90 +1,108 @@
-```
-SYSTEM_STATUS: CORE_ECHO_DETECTED
-TARGET_ACQUIRED: Evil Corp (E Corp) / "ELMALCORP"
-PARANOIA_LEVEL: OPTIMAL (100%)
-```
+# Git4dummies
+
+> **Notas de campo para aprender Git sin que Git tenga que fingir que todo salió bien.**
+
+Git4dummies nació de problemas reales: autenticación, repositorios que se desordenan, cambios que necesitan revisión y tareas que nadie recuerda ejecutar.
+
+No es un curso lineal.
+No es documentación oficial.
+No intenta convertir Git en una ceremonia.
+
+Son **notas de campo**: qué pasó, qué rompió, qué se entendió después y qué conviene hacer la próxima vez.
 
 ---
 
-```
-  ██████╗ ██╗████████╗██╗  ██╗██████╗ ██╗   ██╗███╗   ███╗███╗   ███╗██╗███████╗███████╗
- ██╔════╝ ██║╚══██╔══╝██║  ██║██╔══██╗██║   ██║████╗ ████║████╗ ████║██║██╔════╝██╔════╝
- ██║  ███╗██║   ██║   ███████║██║  ██║██║   ██║██╔████╔██║██╔████╔██║██║█████╗  ███████╗
- ██║   ██║██║   ██║   ╚════██║██║  ██║██║   ██║██║╚██╔╝██║██║╚██╔╝██║██║██╔══╝  ╚════██║
- ╚██████╔╝██║   ██║        ██║██████╔╝╚██████╔╝██║ ╚═╝ ██║██║ ╚═╝ ██║██║███████╗███████║
-  ╚═════╝ ╚═╝   ╚═╝        ╚═╝╚═════╝  ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚═╝╚═╝╚══════╝╚══════╝
-```
+## El detonante
+
+Intenté convertir parte de mi trabajo técnico en contenido.
+Entre publicaciones, documentación y experimentos apareció el problema habitual: explicar herramientas reales sin convertirlas en otro tutorial genérico.
+
+Git4dummies terminó siendo otra cosa.
+
+Una colección de problemas concretos donde Git deja de ser "el comando que copiaste de Stack Overflow" y empieza a ser infraestructura de trabajo.
 
 ---
 
-## `> cat manifiesto.txt`
+## Cómo está construido
 
-> **EL DETONANTE:** Tuve la descabellada idea de ser creador de contenido. Intenté aportar valor real compartiendo artículos sobre desarrollo y ciberseguridad en redes como LinkedIn y Reddit. ¿El resultado? Los algoritmos me bloquearon las cuentas por no cumplir con su estándar de antigüedad de cuenta y de contenido genérico y aburrido. Frustración total con el entorno corporativo de ELMALCORP... ehh, digo, internet.
+Cada nota intenta seguir este patrón:
 
-> **LA REACCIÓN:** Mandé sus plataformas al diablo. Mi fuerte no es el marketing digital de autoayuda; mi fuerte es la terminal. Si las corporaciones me cierran la puerta, yo me repliego a mi entorno seguro: GitHub y mi consola local. Aquí no hay filtros estúpidos, censura de bots, ni directores de recursos humanos que aplaudan posts vacíos.
+SITUACIÓN → EL MOMENTO → RECON → BREAK → INTENTOS → LO QUE NO TE DICEN → REFLEXIÓN → SIGUIENTE
 
-> **EL TRATO:** No soy tu profesor. No tengo tacto para enseñarte con dibujitos. Me tocó dominar Git a la fuerza para blindar mis desarrollos y mis laboratorios ante bloqueos externos. En este repositorio te dejo mis notas de campo masticadas y directas. Si te sirve para proteger tus proyectos de los servidores de terceros, úsalo. Si prefieres seguir mendigando atención en redes controladas, vuelve a lo tuyo.
+La idea no es darte 47 pasos.
 
----
-
-## `> ls -la contenido/`
-
-```
-00_setup/
-    └── ssh-keys.md          → dejar de ser el portero de tu propio proyecto
-
-01_local/
-    └── estructura-repo.md   → un repo que no se convierte en cajón de sastre
-
-02_remote/
-    └── origins.md           → qué es exactamente lo que viaja cuando haces push
-
-03_branches/
-    └── conflictos.md        → cuando dos versiones del mismo archivo se pelean
-
-04_github/
-    └── pages.md             → tu repo como sitio. sin hosting de terceros.
-    └── actions.md           → automatizar lo que haces a mano todos los días
-
-05_campo/           [en construcción]
-    └── casos reales de proyectos reales. sin laboratorio controlado.
-```
+Es mostrarte **por qué existe cada paso**.
 
 ---
 
-## `> echo $METODO`
+## Colección actual
 
-```diff
-+ situación real que rompió algo
-+ error documentado con todo y el momento en que te diste cuenta
-+ razonamiento expuesto — no solo el comando, el por qué del comando
-+ lo que cambió después
-- tutoriales de 47 pasos con capturas de pantalla
+### 00 — Acceso y autenticación
+
+**[SSH keys](00_ssh-keys.md)**
+Qué problema resuelve SSH cuando trabajás con GitHub desde tu máquina, cómo funciona el par de claves y por qué una integración externa como Supabase no debe confundirse con la autenticación SSH de tu terminal.
+
+### 06 — Issues
+
+**[Issues](06_issues.md)**
+Cómo sacar un problema de la memoria de alguien y convertirlo en un objeto con estado, contexto e historia.
+
+### 07 — Pull Requests
+
+**[Pull Requests](07_pull_requests.md)**
+Qué ocurre entre "terminé mi cambio" y "esto entra a main", y por qué la revisión existe.
+
+### 08 — Code Review
+
+**[Code Review](08_code_review.md)**
+Cómo convertir una revisión en conversación técnica en lugar de una pelea de preferencias.
+
+### 09 — Automatización
+
+**[GitHub Actions](09_automatizacion.md)**
+Qué conviene sacar de la memoria humana y dejar que el repositorio ejecute solo.
+
+---
+
+## Una nota sobre la numeración
+
+Los nombres `06`–`09` pertenecen a una etapa anterior de la serie.
+
+Los capítulos `01`–`05` fueron retirados durante una reconstrucción del repositorio y **no se presentan aquí como si siguieran existiendo**.
+
+La numeración histórica se conserva para no romper innecesariamente referencias a los archivos ya publicados.
+
+La colección puede crecer desde aquí sin fingir que el repositorio tiene capítulos que todavía no existen.
+
+---
+
+## Lo que no vas a encontrar
+
+- tutoriales de 47 pasos sin contexto
+- teoría presentada como receta universal
 - "¡excelente trabajo!" al final de cada sección
-- teoría sin contexto de cuándo y por qué usarla
-```
+- comandos que nadie explica
+
++ situación real
++ error documentado
++ razonamiento
++ mecanismo técnico
++ consecuencia
++ lo que cambió después
 
 ---
 
+## El principio
+
+> **El error no documentado es un error que vas a repetir.**
+
+> **Si el mecanismo real es más complicado que el tutorial, documentamos el mecanismo real.**
+
+Aunque rompa la explicación bonita.
+
 ---
 
-![t474_r0b07](assets/t474_r0b07_logo.png)
+**Tata Robot / t474-r0b07**  
+AI Systems Builder · Software · Cybersecurity
 
-> `// los bits menos significativos son los que más dicen.`
-
----
-
-```
-█████████████████████████████████████████████
-█                                           █
-█   el error no documentado                █
-█   es un error que vas a repetir.         █
-█                                           █
-█████████████████████████████████████████████
-```
-
-```
-SYSTEM_NOTE: Manifiesto cerrado.
-```
-
-> *→ [github.com/t474-r0b07](https://github.com/t474-r0b07)*
+→ [github.com/t474-r0b07](https://github.com/t474-r0b07)
