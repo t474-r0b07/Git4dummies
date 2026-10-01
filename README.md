@@ -42,6 +42,31 @@ Es mostrarte **por qué existe cada paso**.
 **[SSH keys](00_ssh-keys.md)**
 Qué problema resuelve SSH cuando trabajás con GitHub desde tu máquina, cómo funciona el par de claves y por qué una integración externa como Supabase no debe confundirse con la autenticación SSH de tu terminal.
 
+### 01 — Estructura de un repositorio
+
+**[Estructura de repo](01_estructura-repo.md)**
+Qué comunica la estructura de un repositorio, por qué los nombres importan y cómo evitar que la estética termine ocultando el proyecto.
+
+### 02 — Remotos y `origin`
+
+**[Orígenes](02_origenes.md)**
+Qué significa realmente `origin`, cómo comprobar a dónde apunta un repositorio y qué revisar antes de hacer push.
+
+### 03 — Público y privado
+
+**[Separar lo público de lo privado](03_publico-privado.md)**
+Cómo decidir qué pertenece a un repositorio público, qué debe quedar fuera y por qué `.gitignore` no es un sistema de secretos.
+
+### 04 — GitHub Actions
+
+**[Actions](04_actions.md)**
+Qué ocurre cuando un repositorio empieza a reaccionar a eventos por sí mismo y cómo pensar en triggers, jobs, permisos y logs.
+
+### 04 — GitHub Pages
+
+**[Pages](04_pages.md)**
+Cómo convertir un repositorio en un sitio estático y dónde termina Pages cuando necesitas backend o datos dinámicos.
+
 ### 06 — Issues
 
 **[Issues](06_issues.md)**
@@ -66,13 +91,18 @@ Qué conviene sacar de la memoria humana y dejar que el repositorio ejecute solo
 
 ## Una nota sobre la numeración
 
-Los nombres `06`–`09` pertenecen a una etapa anterior de la serie.
+La serie conserva parte de su numeración histórica.
 
-Los capítulos `01`–`05` fueron retirados durante una reconstrucción del repositorio y **no se presentan aquí como si siguieran existiendo**.
+`00` corresponde a la primera nota recuperada.
+`01`–`04` son notas reconstruidas a partir del material que existió en el repositorio.
+`04` contiene dos notas históricas relacionadas con GitHub: Actions y Pages.
 
-La numeración histórica se conserva para no romper innecesariamente referencias a los archivos ya publicados.
+Los capítulos `05` no llegaron a materializarse como una nota publicada en el historial que recuperamos.
 
-La colección puede crecer desde aquí sin fingir que el repositorio tiene capítulos que todavía no existen.
+`06`–`09` pertenecen a la etapa posterior de la serie.
+
+La numeración no intenta fingir que existe una secuencia académica perfecta.
+Es el mapa histórico del proyecto.
 
 ---
 
