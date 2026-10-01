@@ -1,101 +1,148 @@
 ```bash
 $ echo $SITUACION
-> tengo un repo público.
-> quiero convertirlo en un sitio.
+> tengo un reto. alguien va a encontrar la flag.
+> quiero que GitHub reaccione sin que yo esté mirando.
 
-$ echo $REACCION
-> "¿GitHub también puede hacer eso?"
+$ echo $PREGUNTA
+> ¿puede un repositorio ejecutar trabajo por sí mismo?
 ```
 
 ---
 
 ## `> [EL MOMENTO]`
 
-Tenía documentación y proyectos en GitHub.
-Quería una página pública sin montar otro servidor.
+Quería crear un reto CTF dentro del repositorio.
 
-Apareció GitHub Pages.
+La idea era sencilla:
+alguien encontraba una flag y la enviaba mediante una issue.
+El repositorio debía verificarla y actualizar el Hall of Luminous.
 
-La primera versión podía ser tan simple como un `index.html`.
-Eso era suficiente para entender la idea:
+No tenía backend.
 
-**GitHub puede publicar contenido estático desde un repositorio.**
+Pero el repositorio ya tenía algo que no había aprovechado:
+
+**GitHub Actions.**
 
 ---
 
 ## `> [RECON]`
 
-Pages está pensado para sitios estáticos:
+Actions permite definir workflows que GitHub ejecuta cuando ocurre un evento.
+
+El workflow vive normalmente en:
 
 ```text
-HTML
-CSS
-JavaScript
-imágenes
-otros archivos estáticos
+.github/
+└── workflows/
+    └── nombre.yml
 ```
 
-No sustituye automáticamente a un backend ni a una base de datos.
+Un workflow puede reaccionar, por ejemplo, a:
 
-Dependiendo de cómo configures el sitio, puedes publicar desde una rama
-o mediante un workflow de GitHub Actions.
+```yaml
+on:
+  push:
+  pull_request:
+  issues:
+    types: [opened]
+  workflow_dispatch:
+```
 
-La forma exacta de configuración depende del repositorio y de la fuente elegida.
+El evento dispara un job.
+El job contiene pasos.
+Los pasos ejecutan acciones o comandos.
+
+La idea es:
+
+```text
+evento
+   ↓
+workflow
+   ↓
+job
+   ↓
+steps
+   ↓
+resultado
+```
+
+No es magia.
+Es automatización declarativa ejecutada por la infraestructura de GitHub.
 
 ---
 
 ## `> [BREAK]`
 
-Un sitio sencillo puede empezar así:
+Un ejemplo mínimo:
+
+```yaml
+name: check-issue
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Process issue
+        run: echo "procesando issue"
+```
+
+Para un reto real podrías usar `actions/github-script` u otra herramienta
+para consultar la API de GitHub, comprobar el contenido de la issue y reaccionar.
+
+La lógica concreta depende del proyecto.
+
+Lo importante es entender dónde vive cada pieza:
 
 ```text
-tu-repo/
-├── index.html
-├── assets/
-├── css/
-└── js/
+.github/workflows/  → definición
+event               → disparador
+job                 → unidad de ejecución
+step                → acción concreta
+log                 → evidencia de lo que ocurrió
 ```
-
-Después configuras Pages en:
-
-```text
-Repository
-→ Settings
-→ Pages
-```
-
-Si eliges publicar desde una rama, GitHub usa la rama y carpeta que hayas configurado.
-
-Una actualización del sitio puede terminar siendo tan simple como:
-
-```bash
-git add .
-git commit -m "actualizar sitio"
-git push origin main
-```
-
-El despliegue depende de la configuración y puede tardar un poco en reflejarse.
 
 ---
 
 ## `> [INTENTOS]`
 
 <details>
-<summary><code>// de HTML plano a sitio real.</code></summary>
+<summary><code>// el primer workflow nunca sale perfecto.</code></summary>
 
 ```bash
-# — la página funciona pero las imágenes no
-# revisar las rutas relativas.
+# — error de YAML
+# una indentación incorrecta puede impedir que el workflow sea válido.
 
-# — el sitio está configurado pero no publica
-# revisar Settings → Pages y el estado del deployment.
+# fix:
+# mirar la pestaña Actions y leer el error exacto.
 
-# — el sitio necesita datos dinámicos
-# Pages por sí solo no proporciona una base de datos ni un backend.
-# separar el frontend estático del servicio que maneja los datos.
+# — el trigger no coincide con el caso
+on:
+  push:
 
-# — quiero automatización
-# usar GitHub Actions como pipeline de build/deploy cuando el proyecto lo necesite.
+# pero estabas esperando que se ejecutara cuando alguien abre una issue.
+
+# fix:
+# revisar el evento antes de revisar el script.
+
+# — el workflow necesita permisos que no tiene
+# no asumir que el token automático puede hacer cualquier cosa.
+
+# fix:
+# declarar los permisos necesarios y usar el mínimo alcance posible.
+
+# — probaste con la flag real
+# mala idea.
+
+# fix:
+t474{test_flag}
+# usar datos falsos hasta comprobar el flujo.
 ```
 
 </details>
@@ -104,56 +151,57 @@ El despliegue depende de la configuración y puede tardar un poco en reflejarse.
 
 ## `> [LO QUE NO TE DICEN]`
 
-"Es estático" no significa "es limitado".
+"GitHub ejecuta tu código" no significa "GitHub puede hacer cualquier cosa sin límites".
 
-Un sitio estático puede tener JavaScript, animaciones, audio,
-canvas, interfaces interactivas y aplicaciones completas en el navegador.
+Los workflows dependen del evento, los permisos, el entorno de ejecución,
+los secretos disponibles y las condiciones de uso de GitHub.
 
-Lo que no debes asumir es que Pages ejecutará código de servidor.
+Los secretos del repositorio u organización pueden exponerse si el workflow
+los imprime, transforma o maneja de forma insegura.
 
-La frontera es:
+Regla básica:
 
 ```text
-navegador → HTML/CSS/JS → sí
-
-servidor / base de datos → no por Pages por sí solo
+si un workflow no necesita un secreto → no se lo des
+si necesita permisos de escritura → concédele solo los necesarios
+si procesa entrada de usuarios → trátala como entrada no confiable
 ```
 
-Y una precisión importante respecto a la versión antigua:
+Y antes de automatizar algo destructivo:
 
-**no hay que prometer que un sitio aparecerá inmediatamente en Google.**
-La indexación depende de los buscadores y puede tardar.
+**haz que el workflow pueda fallar de forma segura.**
 
 ---
 
 ## `> [REFLEXIÓN]`
 
 ```diff
-+ Pages para contenido estático
-+ index.html como punto de entrada cuando corresponde
-+ revisar Settings → Pages y el deployment
-+ JavaScript para interactividad en el navegador
-+ Actions cuando el proyecto necesita un pipeline automatizado
-+ separar frontend estático de backend/datos
-- asumir que Pages es un servidor backend
-- prometer indexación inmediata
-- confundir "estático" con "sin JavaScript"
-- copiar una configuración sin comprobar desde qué rama/fuente publica
++ .github/workflows/ para los workflows
++ elegir el evento correcto
++ leer los logs antes de adivinar
++ permisos mínimos
++ datos falsos durante las pruebas
++ tratar entradas de issues y PRs como no confiables
++ documentar qué modifica realmente el workflow
+- asumir que "Actions" significa permisos ilimitados
+- imprimir secretos en logs
+- probar automatizaciones destructivas con datos reales
+- copiar YAML sin entender el evento que lo dispara
 ```
 
 ---
 
 ## `> echo $SIGUIENTE`
 
-Ya tienes una forma de publicar el sitio.
+Ahora el repositorio puede reaccionar a eventos.
 
-Ahora Git4dummies deja de ser solo una colección de conceptos.
+Pero todavía hay otra herramienta que cambia completamente lo que puedes hacer
+con un repo público:
 
-Lo siguiente son problemas de colaboración que aparecen cuando el repositorio
-empieza a recibir cambios de otras personas — o de ti mismo desde otra rama.
+**GitHub Pages.**
 
 ```text
-→ siguiente: 06_issues.md
+→ siguiente: 04_pages.md
 ```
 
 ---
@@ -161,11 +209,11 @@ empieza a recibir cambios de otras personas — o de ti mismo desde otra rama.
 ```
 █████████████████████████████████████████████
 █                                           █
-█   no necesitabas montar un servidor      █
-█   para publicar un sitio estático.       █
+█   no necesitabas otro servidor            █
+█   para automatizar todo.                  █
 █                                           █
-█   pero sí necesitabas saber              █
-█   qué significa "estático".              █
+█   primero necesitabas entender            █
+█   qué evento dispara qué cosa.            █
 █                                           █
 █████████████████████████████████████████████
 ```
