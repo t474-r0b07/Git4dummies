@@ -31,18 +31,21 @@ Es una falla de diseño que aceptaste sin cuestionarla.
 
 ## `> [RECON]`
 
-El problema no era la contraseña.
-Era que GitHub y Supabase no tenían forma de reconocerse sin vos en el medio.
+El problema no era solamente la contraseña.
+Era mezclar dos problemas de autenticación distintos.
 
-Cada herramienta que vinculas a GitHub — Supabase, Vercel, tu terminal, un pipeline de CI —
-necesita una forma de decirle a GitHub *"soy yo, dejame pasar"*
-sin que vos estés ahí firmando cada vez.
+Tu terminal necesita una forma de autenticarse ante GitHub.
+Una integración externa — como Supabase o Vercel — puede usar OAuth,
+una GitHub App u otro mecanismo propio para obtener autorización.
 
-Hay dos maneras de resolver eso:
+SSH resuelve principalmente el primer problema:
+la autenticación de tu máquina cuando Git usa una URL SSH.
+
+Hay dos caminos habituales para Git desde tu terminal:
 
 ```
 HTTPS + token    →  un string largo que pegás en algún lado y rezás por él
-SSH key pair     →  criptografía asimétrica. una clave que nunca sale de tu máquina.
+SSH key pair     →  criptografía asimétrica. la privada nunca sale de tu máquina.
 ```
 
 Una es un parche.
@@ -58,16 +61,16 @@ Es un par. Dos archivos matemáticamente vinculados:
 
 ```
 ~/.ssh/id_ed25519        →  clave privada. no sale de tu máquina. nunca.
-~/.ssh/id_ed25519.pub    →  clave pública. esta la das. a GitHub, a Supabase, a quien necesite.
+~/.ssh/id_ed25519.pub    →  clave pública. esta sí se registra en GitHub.
 ```
 
-Lo que GitHub hace con tu clave pública es lo mismo que hace una cerradura con tu llave —
-no te pregunta tu nombre.
-Te reconoce por la forma.
+Cuando tu terminal usa una URL SSH para hacer `git push`,
+GitHub verifica que puedas demostrar la posesión de la clave privada
+correspondiente a la clave pública que registraste.
 
-Cuando tu terminal hace `git push`,
-hay un handshake criptográfico que dura milisegundos
-y que vos nunca ves.
+El intercambio ocurre en segundos y vos no tenés que escribir
+una credencial del repositorio en cada push.
+
 Eso es lo que querés.
 
 ---
@@ -101,7 +104,7 @@ $ ssh-keygen
 $ ssh-keygen -t ed25519 -C "tu@email.com"
 $ eval "$(ssh-agent -s)"
 $ ssh-add ~/.ssh/id_ed25519
-# copiar ~/.ssh/id_ed25519.pub → GitHub Settings → SSH keys
+# copiar ~/.ssh/id_ed25519.pub → GitHub Settings → SSH and GPG keys
 $ ssh -T git@github.com
 > Hi t474-r0b07! You've successfully authenticated.
 ```
@@ -112,13 +115,13 @@ $ ssh -T git@github.com
 
 ## `> [LO QUE NO TE DICEN]`
 
-La passphrase no es opcional.
+La passphrase es una recomendación de seguridad importante.
 
 Si alguien accede a tu máquina y encuentra `~/.ssh/id_ed25519` sin passphrase —
 tiene acceso a todo lo que esa clave autorizaba.
 GitHub. Supabase. Servidores. Lo que sea que hayas vinculado.
 
-Con passphrase, tiene un archivo cifrado inútil.
+Con passphrase, la clave privada queda protegida por una capa adicional de cifrado.
 
 El agente SSH existe precisamente para que no escribas la passphrase cuarenta veces por día:
 
@@ -127,9 +130,9 @@ $ eval "$(ssh-agent -s)"
 $ ssh-add ~/.ssh/id_ed25519
 ```
 
-Lo desbloqueas una vez por sesión.
-El agente lo guarda en memoria.
-Cuando cierras la terminal, desaparece.
+El agente puede mantener la clave desbloqueada en memoria para evitar
+introducir la passphrase repetidamente. Su comportamiento y duración
+dependen de cómo esté configurado tu sistema.
 
 Eso es el balance entre seguridad y usabilidad.
 No es magia. Es diseño.
@@ -139,9 +142,9 @@ No es magia. Es diseño.
 ## `> [REFLEXION]`
 
 ```diff
-+ una clave por máquina — no copies la privada a otro lado, generá una nueva
++ una clave por máquina — generá una nueva cuando corresponda
 + poné passphrase — siempre
-+ Ed25519, no RSA — más corto, más seguro, más moderno
++ Ed25519 — opción moderna y ampliamente soportada
 + nombrá la clave en GitHub con el nombre de la máquina — vas a tener varias
 - subir id_ed25519 (sin .pub) a cualquier lado es un error del que no se vuelve fácil
 - HTTPS con token en un .txt es un parche, no una solución
@@ -153,15 +156,15 @@ No es magia. Es diseño.
 ## `> echo $SIGUIENTE`
 
 Ahora GitHub te reconoce.
-Supabase puede conectarse sin pedirte que firmes cada vez.
-Vos podés trabajar.
+Tu terminal puede trabajar con GitHub sin pedirte una credencial en cada push.
+Las integraciones externas tienen su propio mecanismo de autorización.
 
 El siguiente problema es más sutil:
 ¿cómo estructurás un repo para que no se convierta en un cajón de sastre
 dos semanas después de crearlo?
 
 ```
-→ siguiente: 01_estructura-repo.md
+→ siguiente: 06_issues.md
 ```
 
 ---
