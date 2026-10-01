@@ -53,8 +53,7 @@ Request changes  →  hay cosas que corregir antes
 Comment          →  solo observaciones, no bloquea el merge
 ```
 
-La diferencia entre los tres no es gravedad.
-Es si el reviewer considera que el código puede entrar o no.
+La diferencia principal es el efecto sobre el estado de la revisión: una aprobación permite avanzar, una solicitud de cambios indica que el reviewer quiere correcciones antes del merge, y un comentario deja una observación sin convertirla necesariamente en bloqueo.
 
 ---
 
@@ -75,9 +74,9 @@ La forma en que se escribe un comentario determina si produce un cambio o una di
  ¿qué opinás de extraer esto a una función separada?"
 ```
 
-La pregunta obliga a pensar.
-La afirmación produce defensiva.
-La misma información, distinto resultado.
+Una pregunta puede abrir la conversación en lugar de asumir la solución.
+Una afirmación tajante puede poner a la otra persona a la defensiva.
+La misma información puede producir conversaciones muy distintas según cómo se formule.
 
 ---
 
@@ -114,8 +113,8 @@ reviewer: "todo"
 # — Resolved conversations
 # comentario atendido → marcar como Resolved
 # desaparece del feed activo, queda en el historial
-# convención: el author resuelve sus propios comentarios cuando hace el cambio
-# si resolvés sin hacer el cambio — explicás por qué antes de resolverlo
+# convención posible: el author puede resolver una conversación cuando el cambio ya fue atendido
+# si se resuelve sin hacer el cambio — conviene dejar una explicación clara
 ```
 
 </details>
@@ -130,9 +129,8 @@ Si solo una persona entiende un módulo —
 el proyecto tiene un punto de falla humano.
 El review fuerza a más personas a entender más partes del sistema.
 
-Un bug encontrado en review cuesta minutos.
-El mismo bug encontrado en producción cuesta horas.
-El mismo bug encontrado por un cliente no tiene precio fijo.
+Encontrar un problema antes del merge suele reducir el costo de corregirlo frente a descubrirlo después del despliegue.
+El costo real depende del problema, del sistema y de cuándo se detecte.
 
 Y hay algo más que nadie menciona:
 el feedback positivo también es información.
@@ -150,13 +148,13 @@ Sin eso, el author no sabe si lo que hizo bien fue accidental o intencional.
 ## `> [REFLEXION]`
 
 ```diff
-+ preguntar en lugar de afirmar — la pregunta informa, la afirmación defiende
++ preguntar en lugar de afirmar — abre la discusión sin asumir la solución
 + separar bloqueante de sugerencia — el author sabe qué es urgente y qué no
 + usar Suggestions para cambios pequeños — GitHub crea el commit solo
 + reconocer lo que está bien — también es feedback
 - "esto está mal" sin contexto no es un comentario, es una queja
 - resolver comentarios sin hacer el cambio y sin explicar por qué — rompe la confianza
-- revisar solo para demostrar que sabés más — contamina el proceso para todos
+- convertir el review en una demostración de autoridad — desvía el objetivo técnico
 ```
 
 ---
