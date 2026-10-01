@@ -26,8 +26,8 @@ Sino porque nadie más lo vio antes de que llegara.
 Nadie preguntó si había efectos secundarios.
 Nadie verificó que no pisara el trabajo de otra persona.
 
-El push directo a main es confianza sin sistema.
-Y la confianza sin sistema falla exactamente cuando más importa.
+El push directo a main puede ser una decisión válida en un proyecto personal o en un flujo muy simple.
+El problema aparece cuando varias personas comparten la rama y no existe una barrera de revisión antes del merge.
 
 ---
 
@@ -74,14 +74,14 @@ $ git push origin feature/mi-cambio
 # 7. la rama se elimina — ya no la necesitás
 ```
 
-El paso 5 es el que la mayoría quiere saltarse.
-Es también el único que previene el paso "producción en llamas".
+El paso 5 es el que más fácilmente se salta.
+Y es precisamente donde aparece la oportunidad de detectar problemas antes del merge.
 
 ---
 
 ## `> [BREAK]`
 
-El título del PR sigue las mismas reglas que un commit bien escrito:
+El título del PR conviene que sea específico y fácil de escanear. Puede seguir una convención como la de los commits:
 
 ```bash
 feat: agregar autenticación con Google OAuth
@@ -171,8 +171,8 @@ Rebase and merge  →  reaplica los commits sobre main sin commit de merge
                      para historial lineal y limpio
 ```
 
-No hay una respuesta correcta.
-Hay una convención de equipo que se elige una vez y se mantiene siempre.
+No hay una estrategia universalmente correcta.
+El proyecto puede elegir una convención y documentarla para que el historial sea predecible.
 Lo que rompe el historial no es usar cualquiera de las tres —
 es usarlas todas al azar.
 
@@ -181,14 +181,14 @@ es usarlas todas al azar.
 ## `> [REFLEXION]`
 
 ```diff
-+ rama por feature — nunca trabajés directamente en main
++ rama por feature — si el proyecto usa PRs, mantené main protegida y trabajá desde ramas
 + descripción con contexto — qué, por qué, cómo probar
 + draft PR para trabajo en progreso — visibilidad sin presión de review
 + closes #N en la descripción — el issue se cierra solo al mergear
-+ eliminar la rama después del merge — el repo no es un cementerio de ramas
++ eliminar las ramas ya integradas si el flujo del equipo no necesita conservarlas
 - PR sin descripción = push directo con burocracia
 - resolver conflictos sin entender qué cambió cada rama = más conflictos después
-- mergear sin que nadie revisó = la pausa obligatoria que no pausó nada
+- asumir que abrir un PR equivale a tener una revisión efectiva
 ```
 
 ---
