@@ -1,190 +1,159 @@
 ```bash
 $ echo $SITUACION
-> tengo un reto. alguien va a encontrar la flag.
-> necesito que GitHub lo sepa antes que yo.
+> tengo un repo público.
+> quiero convertirlo en un sitio.
+
+$ echo $REACCION
+> "¿GitHub también puede hacer eso?"
 ```
 
 ---
 
 ## `> [EL MOMENTO]`
 
-Quería crear un reto CTF dentro del repo.
-El que encontrara la flag merecía un premio.
-Decidí crear un Hall of Luminous — un salón de los que saben mirar.
+Tenía documentación y proyectos en GitHub.
+Quería una página pública sin montar otro servidor.
 
-Entonces apareció el problema real.
+Apareció GitHub Pages.
 
-*¿Cómo hago que GitHub actualice el Hall solo cuando alguien envía la flag correcta?*
+La primera versión podía ser tan simple como un `index.html`.
+Eso era suficiente para entender la idea:
 
-No tengo servidor.
-No tengo backend.
-Solo tengo un repo y ganas de que funcione.
-
-*Podrías verificarlo manualmente.*
-
-No. Si el repo escala no tengo tiempo para revisar cada issue.
-
-*Entonces necesitas automatizarlo.*
-
-Sí. Pero ¿con qué? ¿Flutter?
+**GitHub puede publicar contenido estático desde un repositorio.**
 
 ---
 
 ## `> [RECON]`
 
-*GitHub tiene un sistema de automatización que vive dentro del repo.*
+Pages está pensado para sitios estáticos:
 
-Se llama Actions.
-Un archivo `.yml` en `.github/workflows/` —
-GitHub lo lee, lo ejecuta, y hace lo que le digas
-cada vez que algo pasa en el repo.
+```text
+HTML
+CSS
+JavaScript
+imágenes
+otros archivos estáticos
+```
 
-*¿Gratis?*
+No sustituye automáticamente a un backend ni a una base de datos.
 
-Gratis. Para repos públicos, sin límite práctico.
+Dependiendo de cómo configures el sitio, puedes publicar desde una rama
+o mediante un workflow de GitHub Actions.
 
-*¿Sin servidor?*
-
-Sin servidor. GitHub pone el servidor.
-Tú pones las instrucciones.
-
-*¿Qué puede hacer?*
-
-Lo que le digas.
-Verificar una flag. Actualizar un archivo. Comentar en una issue.
-Cerrarla. Ponerle una etiqueta. Notificar. Desplegar.
-Todo eso sin que estés ahí.
+La forma exacta de configuración depende del repositorio y de la fuente elegida.
 
 ---
 
 ## `> [BREAK]`
 
-La anatomía del workflow que construimos:
+Un sitio sencillo puede empezar así:
 
-```yaml
-on:
-  issues:
-    types: [opened]        # alguien abre una issue → workflow se dispara
-
-jobs:
-  check_flag:
-    runs-on: ubuntu-latest # GitHub pone el servidor
-
-    steps:
-      - uses: actions/checkout@v4           # clona el repo
-      - uses: actions/github-script@v7      # JavaScript con acceso a la API
-        with:
-          script: |
-            // lee la issue
-            // verifica si contiene la flag correcta
-            // si sí: actualiza HALL_OF_LUMINOUS.md
-            //        comenta con el mensaje de acceso concedido
-            //        cierra la issue con label "luminous"
-            // si no: responde que está equivocado
-            //        cierra la issue con label "flag-invalid"
+```text
+tu-repo/
+├── index.html
+├── assets/
+├── css/
+└── js/
 ```
 
-*Todo eso sin backend.*
+Después configuras Pages en:
 
-Todo eso con un archivo.
+```text
+Repository
+→ Settings
+→ Pages
+```
 
----
+Si eliges publicar desde una rama, GitHub usa la rama y carpeta que hayas configurado.
 
-## `> [LO QUE PUEDE HACER ACTIONS]`
+Una actualización del sitio puede terminar siendo tan simple como:
 
 ```bash
-# lo que acabamos de construir
-on: issues → verificar flag → actualizar archivo → responder → cerrar
-
-# lo que más se usa
-on: push → main          # publicar documentación automáticamente
-on: pull_request         # correr tests antes de aceptar cambios
-on: schedule (cron)      # ejecutar algo todos los lunes a las 9am
-on: workflow_dispatch    # botón manual para ejecutar cuando quieras
+git add .
+git commit -m "actualizar sitio"
+git push origin main
 ```
 
-*¿Y si algo falla?*
-
-GitHub te notifica. El workflow queda registrado en la pestaña Actions
-con el log completo de qué pasó y en qué línea falló.
+El despliegue depende de la configuración y puede tardar un poco en reflejarse.
 
 ---
 
 ## `> [INTENTOS]`
 
 <details>
-<summary><code>// el primer workflow nunca corre perfecto.</code></summary>
+<summary><code>// de HTML plano a sitio real.</code></summary>
 
 ```bash
-# — el workflow falla en 0 segundos
-# causa: error de sintaxis en el YAML
-# el YAML es sensible a espacios e indentación
-# una comilla mal cerrada rompe todo
-# fix: revisar la pestaña Actions → click en el run fallido → leer el log
+# — la página funciona pero las imágenes no
+# revisar las rutas relativas.
 
-# — los backticks rompen el YAML
-const msg = `hola ${user}`    # esto puede romper el parser
-const msg = 'hola ' + user    # esto no
-# fix: concatenación de strings dentro de scripts en YAML
+# — el sitio está configurado pero no publica
+# revisar Settings → Pages y el estado del deployment.
 
-# — labels que no existen
-# el workflow intenta agregar "luminous" al issue
-# el label no fue creado → error
-# fix: crear los labels manualmente antes de correr el workflow
-# Issues → Labels → New label
+# — el sitio necesita datos dinámicos
+# Pages por sí solo no proporciona una base de datos ni un backend.
+# separar el frontend estático del servicio que maneja los datos.
 
-# — el workflow se dispara pero no hace nada
-# causa: la condición if no se cumple
-if: "contains(github.event.issue.title, 't474{')"
-# si la flag no está en el título — no corre
-# fix: verificar que el trigger y la condición coinciden con el caso real
+# — quiero automatización
+# usar GitHub Actions como pipeline de build/deploy cuando el proyecto lo necesite.
 ```
 
 </details>
 
 ---
 
+## `> [LO QUE NO TE DICEN]`
+
+"Es estático" no significa "es limitado".
+
+Un sitio estático puede tener JavaScript, animaciones, audio,
+canvas, interfaces interactivas y aplicaciones completas en el navegador.
+
+Lo que no debes asumir es que Pages ejecutará código de servidor.
+
+La frontera es:
+
+```text
+navegador → HTML/CSS/JS → sí
+
+servidor / base de datos → no por Pages por sí solo
+```
+
+Y una precisión importante respecto a la versión antigua:
+
+**no hay que prometer que un sitio aparecerá inmediatamente en Google.**
+La indexación depende de los buscadores y puede tardar.
+
+---
+
 ## `> [REFLEXIÓN]`
 
 ```diff
-+ .github/workflows/ — exactamente ahí, no en otra carpeta
-+ el trigger define cuándo corre — push, issue, schedule, manual
-+ github-script da acceso completo a la API de GitHub en JavaScript
-+ crear labels antes de que el workflow los use
-+ Actions → log completo de cada run — ahí está el error
-- tabs en lugar de espacios en el YAML
-- backticks dentro de scripts en YAML
-- labels referenciados que no existen
-- asumir que el workflow corre sin revisar el log
-
-# — publicar la flag sin querer al probar
-# abrí una issue con la flag real para testear el workflow
-# quedó abierta y visible durante semanas
-# nadie entraba al repo todavía — tuve suerte
-# me di cuenta semanas después y cerré la brecha
-# fix: usar flag falsa para testing
-# t474{test_flag} para probar el workflow
-# t474{real_flag} solo cuando todo está verificado
++ Pages para contenido estático
++ index.html como punto de entrada cuando corresponde
++ revisar Settings → Pages y el deployment
++ JavaScript para interactividad en el navegador
++ Actions cuando el proyecto necesita un pipeline automatizado
++ separar frontend estático de backend/datos
+- asumir que Pages es un servidor backend
+- prometer indexación inmediata
+- confundir "estático" con "sin JavaScript"
+- copiar una configuración sin comprobar desde qué rama/fuente publica
 ```
 
 ---
 
 ## `> echo $SIGUIENTE`
 
-El Hall of Luminous se actualiza solo.
-GitHub verificó la flag, respondió, cerró la issue y registró el nombre
-sin que yo estuviera ahí.
+Ya tienes una forma de publicar el sitio.
 
-Un archivo `.yml`.
-Cero servidores.
-Cero costo.
+Ahora Git4dummies deja de ser solo una colección de conceptos.
 
-*¿Y el sitio web?*
+Lo siguiente son problemas de colaboración que aparecen cuando el repositorio
+empieza a recibir cambios de otras personas — o de ti mismo desde otra rama.
 
-Eso también lo hace GitHub solo.
-
-```
-→ siguiente: 04_github/pages.md
+```text
+→ siguiente: 06_issues.md
 ```
 
 ---
@@ -192,8 +161,11 @@ Eso también lo hace GitHub solo.
 ```
 █████████████████████████████████████████████
 █                                           █
-█   no necesitabas un servidor.            █
-█   nunca lo necesitaste.                  █
+█   no necesitabas montar un servidor      █
+█   para publicar un sitio estático.       █
+█                                           █
+█   pero sí necesitabas saber              █
+█   qué significa "estático".              █
 █                                           █
 █████████████████████████████████████████████
 ```
