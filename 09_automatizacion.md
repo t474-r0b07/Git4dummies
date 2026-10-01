@@ -47,9 +47,10 @@ click manual             →  cuando vos decidís ejecutarlo
 creación de un release   →  cuando publicás una versión
 ```
 
-El código que se ejecuta puede hacer cualquier cosa que hagas en una terminal:
-correr tests, hacer build, deployar, enviar notificaciones,
-cerrar issues viejos, revisar código con IA.
+El código que se ejecuta puede automatizar muchas tareas de un entorno de desarrollo:
+correr tests, hacer builds, desplegar, enviar notificaciones,
+cerrar issues viejos o ejecutar herramientas de análisis.
+Lo que puede hacer exactamente depende de los permisos y del entorno del runner.
 
 ---
 
@@ -127,8 +128,8 @@ Sin "¿corriste los tests antes de pushear?".
     API_KEY: ${{ secrets.MI_API_KEY }}
   run: ./deploy.sh
 
-# el valor nunca aparece en los logs
-# GitHub lo enmascara automáticamente
+# GitHub intenta enmascarar los valores de secretos conocidos en los logs
+# no trates el masking como sustituto de no imprimir credenciales
 
 # — Dependabot: el que parchea sin que lo llamen
 # .github/dependabot.yml
@@ -138,8 +139,8 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-# abre PRs automáticos para actualizar dependencias
-# vos revisás, aprobás o rechazás
+# puede abrir PRs automáticos para actualizar dependencias
+# vos revisás, aprobás o rechazás según tu flujo
 # sin revisar manualmente cada semana qué está desactualizado
 
 # — CodeRabbit y similares
@@ -161,13 +162,13 @@ CI y CD no son lo mismo aunque siempre aparecen juntos.
 
 ```
 CI — Continuous Integration
-cada cambio que entra al repo pasa por validación automática
-tests, lint, build
+integra cambios con frecuencia y usa validaciones automáticas como tests, lint o build
+el workflow concreto depende del proyecto
 el objetivo: detectar problemas antes de que se acumulen
 
 CD — Continuous Delivery / Deployment
-si la integración pasa → el código se despliega automáticamente
-puede ser a staging, a producción, o ambos
+automatiza la preparación o el despliegue del software después de las validaciones
+puede incluir staging, producción, aprobaciones manuales u otras etapas
 
 push → tests → build → deploy a staging → (aprobación) → deploy a producción
 ```
@@ -182,14 +183,14 @@ Después les delegás la decisión.
 ## `> [REFLEXION]`
 
 ```diff
-+ un workflow de CI básico tarda 15 minutos en configurar
++ un workflow de CI básico puede configurarse rápidamente
 + ahorra horas de debugging manual a lo largo del tiempo
 + Dependabot para npm o pip puede automatizar actualizaciones; revisá las condiciones y límites aplicables al repositorio
 + secretos en Settings, nunca en el YAML
-+ branch protection + CI = nadie mergea con tests rotos
++ branch protection + checks requeridos = podés impedir el merge cuando esos checks fallan
 - automatizar el deploy sin tests que cubran lo crítico
   es automatizar la velocidad con que rompés producción
-- runners gratuitos tienen límites en repos privados — revisá el plan
+- los runners hospedados tienen límites y condiciones que dependen del repositorio y del plan — revisá los límites vigentes
 - un workflow que nunca falla puede ser un workflow que no está probando nada real
 ```
 
