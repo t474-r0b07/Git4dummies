@@ -191,7 +191,7 @@ sin romper lo que ya funciona
 y sin que nadie tenga que confiar ciegamente en vos?
 
 ```
-→ siguiente: 05_pull_requests.md
+→ siguiente: 07_pull_requests.md
 ```
 
 ---
