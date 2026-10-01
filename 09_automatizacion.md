@@ -63,7 +63,7 @@ JOB        →  conjunto de pasos que corren en una máquina virtual
 STEP       →  una acción individual dentro de un job
 ACTION     →  bloque reutilizable de lógica (tuyo o de la comunidad)
 RUNNER     →  la máquina virtual donde corre todo
-               GitHub la provee gratis para repos públicos
+               GitHub proporciona runners hospedados para workflows, con límites y condiciones que dependen del tipo de repositorio y del plan
 ```
 
 ---
@@ -184,7 +184,7 @@ Después les delegás la decisión.
 ```diff
 + un workflow de CI básico tarda 15 minutos en configurar
 + ahorra horas de debugging manual a lo largo del tiempo
-+ Dependabot por npm o pip — siempre, cuesta cero
++ Dependabot para npm o pip puede automatizar actualizaciones; revisá las condiciones y límites aplicables al repositorio
 + secretos en Settings, nunca en el YAML
 + branch protection + CI = nadie mergea con tests rotos
 - automatizar el deploy sin tests que cubran lo crítico
@@ -205,7 +205,7 @@ Lo que sigue ya no es configuración — es campo:
 proyectos reales, errores reales, decisiones reales.
 
 ```
-→ siguiente: 05_campo/ [en construcción]
+→ siguiente: el próximo caso de campo
 ```
 
 ---
