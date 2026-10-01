@@ -47,8 +47,8 @@ checks         →  tests automáticos que corren al abrir el PR
 estado         →  open / merged / closed sin merge
 ```
 
-En proyectos personales podés saltártelo.
-En cualquier proyecto con más de una persona — no.
+En proyectos personales podés trabajar sin PR si el flujo no lo necesita.
+En equipos, el PR introduce una revisión explícita antes del merge.
 
 ---
 
@@ -204,7 +204,7 @@ sin destruir la relación
 y sin que el feedback se pierda en la dinámica de equipo?
 
 ```
-→ siguiente: 06_code_review.md
+→ siguiente: 08_code_review.md
 ```
 
 ---
