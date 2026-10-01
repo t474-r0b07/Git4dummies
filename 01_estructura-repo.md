@@ -5,12 +5,9 @@ $ echo $SITUACION
 $ echo $VISITANTE
 > "¿usas eso para hackear a los que entran?"
 
-$ echo $VISITANTE_2
-> "¿puedes hackear WhatsApp?"
-
 $ echo $DIAGNOSTICO
 > el repo comunicaba mal.
-> no era el visitante. eras tú.
+> no era el visitante. era el diseño.
 ```
 
 ---
@@ -18,71 +15,70 @@ $ echo $DIAGNOSTICO
 ## `> [EL MOMENTO]`
 
 Compartí el repo en un estado de WhatsApp.
-Entró un telecomunicador — alguien que debería saber leer esto.
-Su primera pregunta: *"¿usas eso para hackear a los que entran?"*
 
-Respondí: "tienes que actualizarte."
+Entró un telecomunicador — alguien que debería poder leer un repo técnico.
+Su primera pregunta fue: *"¿usas eso para hackear a los que entran?"*
 
-Otro llegó de pasada y fue directo al grano:
+Otro visitante llegó después y fue directo al grano:
 *"¿puedes hackear WhatsApp?"*
 
-El repo era público. Estaba bien construido técnicamente.
+El repo era público y técnicamente tenía cosas interesantes.
 Pero comunicaba exactamente lo contrario de lo que yo quería.
 
-Parte del problema era el leetspeak.
-Pensé que era identidad. Que era estilo.
-Hasta que me di cuenta que Google no indexaba `g1t4dumm13s`.
-El buscador leía ruido. No contenido.
+Parte del problema era el leetspeak. Pensé que era identidad.
+Hasta que apareció una consecuencia bastante menos estética:
+un nombre como `g1t4dumm13s` no ayuda a que una persona encuentre
+el proyecto buscando `git4dummies`.
 
-Un repo que nadie entiende — ni Google ni el telecomunicador —
-no es un repo misterioso.
-Es un repo roto.
+El problema no era que la gente "no entendiera".
+El repo estaba obligando al visitante a adivinar.
 
 ---
 
 ## `> [RECON]`
 
-Cuando alguien entra a tu repo, GitHub muestra dos cosas:
+Cuando alguien entra a un repositorio, hay dos cosas que funcionan como mapa:
 
+```text
+README.md              ← qué es, por qué existe y cómo empezar
+árbol del repositorio  ← dónde está cada cosa
 ```
-1. README.md    → si existe, es lo primero que ve
-2. lista de archivos y carpetas → el mapa del lugar
-```
 
-El telecomunicador no vio documentación.
-Vio carpetas con nombres crípticos, archivos sin contexto
-y un README que parecía interfaz de ataque.
+GitHub no interpreta tus intenciones.
+Lee nombres, archivos, enlaces y documentación.
 
-No era su problema de lectura.
-Era tu problema de diseño.
+Un repositorio puede estar técnicamente correcto y aun así ser difícil de entender.
 
-GitHub no adivina intenciones.
-Google tampoco.
-Leen lo que hay.
+Ese es un problema de diseño, no de inteligencia del visitante.
 
 ---
 
 ## `> [BREAK]`
 
-Un repo no es una carpeta de descargas.
-Es lo primero que ve alguien que no te conoce.
+Una estructura simple puede ser suficiente:
 
-```
+```text
 tu-repo/
-├── README.md          ← el mapa. siempre en la raiz. siempre.
-├── assets/            ← imágenes, logos, recursos estáticos
-├── docs/              ← documentación, notas, writeups
-├── src/               ← código fuente si aplica
-└── .github/           ← workflows — GitHub los busca exactamente aquí
+├── README.md
+├── assets/
+├── docs/
+├── src/
+└── .github/
     └── workflows/
 ```
 
-Cada carpeta es un contrato.
-`assets/` dice: aquí viven las imágenes.
-`docs/` dice: aquí vive la documentación.
+No necesitas todas esas carpetas en todos los proyectos.
 
-Si la imagen está en `js/` porque "ahí había espacio" —
-no carga. Nadie sabe por qué. Tú tampoco después de tres semanas.
+La regla útil es más simple:
+
+> **una carpeta debería tener un propósito reconocible.**
+
+`assets/` puede contener imágenes y recursos estáticos.
+`docs/` puede contener documentación.
+`src/` puede contener código fuente.
+`.github/workflows/` es la ubicación que GitHub Actions espera para sus workflows.
+
+Si una carpeta existe solo porque "ahí había espacio", probablemente su nombre no está haciendo ningún trabajo.
 
 ---
 
@@ -92,100 +88,99 @@ no carga. Nadie sabe por qué. Tú tampoco después de tres semanas.
 <summary><code>// el que no documenta sus errores, los repite.</code></summary>
 
 ```bash
-# — el leetspeak y Google
-# g1t4dumm13s → Google lee: "g1t4dumm13s"
-# git4dummies  → Google lee: "git4dummies"
-# el buscador no descifra leet. indexa texto.
-# fix: leetspeak para estética visual, no para nombres de repo o carpetas
+# — el leetspeak como identidad
+g1t4dumm13s
+# se veía bien para la estética.
+# no era una buena decisión para un identificador que la gente debe encontrar.
 
-# — la imagen que no cargaba
+# fix:
+# identidad visual en títulos, arte y presentación.
+# nombres de repositorio y archivos que sigan siendo legibles.
+
+# — la imagen estaba en una carpeta equivocada
 ![logo](js/logo.png)
-# el archivo existía. el link estaba bien escrito.
-# vivía en la carpeta equivocada.
-# fix: assets/logo.png — y actualizar el link
+# el archivo existía. el enlace parecía correcto.
+# pero la ubicación no correspondía con su propósito.
 
-# — el README enterrado
+# fix:
+assets/logo.png
+
+# — el README estaba enterrado
 tu-repo/
 └── docs/
-    └── README.md   ← GitHub no lo renderiza automáticamente
-# fix: README.md en la raiz, siempre
+    └── README.md
+
+# GitHub espera README.md en la raíz para mostrarlo como portada del repo.
 
 # — carpetas que no dicen nada
-tu-repo/
-├── stuff/
-├── things/
-└── misc/
-# ni tú sabes qué hay ahí en un mes
-# el telecomunicador tampoco
-# fix: nombres que sean contratos — assets, docs, src, scripts
+stuff/
+things/
+misc/
+
+# fix:
+# nombres que expliquen el propósito real.
 ```
 
 </details>
 
 ---
 
-## `> [INDEXADO]`
+## `> [LO QUE NO TE DICEN]`
 
-Que el repo exista no significa que alguien lo encuentre.
+La estructura no tiene que parecer un proyecto empresarial.
 
-El leetspeak me costó indexado.
-Las carpetas sin nombre me costaron visitantes que no entendían nada.
-La descripción vacía le costaba a Google adivinar de qué trataba el repo.
+Un repositorio personal puede tener tres archivos y ser perfectamente claro.
+Otro puede necesitar `src/`, `tests/`, `docs/` y workflows.
 
-```bash
-# 1. la descripción del repo
-# esa línea corta debajo del nombre
-# GitHub la usa para búsquedas. Google también.
-# "git4dummies — notas de campo sobre Git. en español."
-# eso indexa. "g1t · h4ck · t3rm1n4l" no indexa nada útil.
+El error es convertir una plantilla en una religión.
 
-# 2. los topics
-# etiquetas del repo — máximo 20
-# Settings → General → Topics
-# palabras reales: git, github, español, seguridad, tutorial
+La pregunta útil antes de crear una carpeta es:
 
-# 3. el README
-# Google indexa su contenido completo
-# si escribes en español — apareces donde otros no están
-# ese es el nicho. ese es el punto.
+```text
+¿qué problema de organización resuelve?
+¿alguien nuevo entenderá qué vive aquí?
+¿seguiré entendiendo esto dentro de seis meses?
 ```
 
-El telecomunicador entró porque compartí el link.
-El siguiente visitante va a entrar porque Google lo trajo.
-Ese visitante no tiene contexto previo — solo ve lo que el repo dice.
+Si la respuesta es no, todavía no necesitas esa carpeta.
+
+Y una corrección importante respecto a la versión antigua de esta nota:
+
+**un nombre en leetspeak no impide técnicamente que Google indexe un repositorio.**
+Simplemente puede ser menos claro para búsquedas humanas y para quien intenta recordar o escribir el nombre.
+
+La estética puede quedarse.
+La legibilidad no debería pagar la factura.
 
 ---
 
 ## `> [REFLEXIÓN]`
 
 ```diff
-+ README.md en la raiz — siempre
-+ nombres de carpetas que sean contratos
-+ assets/ para imágenes — no js/, no misc/, no stuff/
-+ descripción real en español — Google la indexa
-+ topics con palabras que la gente busca
-+ leetspeak para estética, no para nombres de archivos o repos
-- carpetas sin nombre claro
-- README enterrado en subcarpetas
-- descripción vacía
-- nombres en leet que Google no puede leer
-- repo que parece herramienta de ataque cuando no lo es
++ README.md en la raíz cuando quieres que sea la portada del repo
++ nombres de carpetas que describan su propósito
++ assets/ para recursos estáticos si el proyecto los necesita
++ .github/workflows/ para GitHub Actions
++ nombres legibles para repositorios y archivos públicos
++ estructura proporcional al proyecto
+- carpetas creadas solo por costumbre
+- stuff/, misc/ y cosas que nadie puede interpretar
+- asumir que el visitante conoce la arquitectura antes de verla
+- confundir estética con comunicación
 ```
 
 ---
 
 ## `> echo $SIGUIENTE`
 
-El repo tiene estructura.
-Google lo encuentra.
-El telecomunicador entiende qué es sin preguntar si hackeas WhatsApp.
+Ya sabes dónde vive cada cosa.
 
-El siguiente problema:
-¿qué pasa exactamente cuando escribes `git push`?
-¿A dónde va? ¿Qué es origin? ¿Quién lo recibe?
+Ahora viene una pregunta más incómoda:
 
-```
-→ siguiente: 02_remote/origins.md
+**cuando haces `git push`, ¿a dónde estás enviando realmente el código?**
+
+```text
+→ siguiente: 02_origenes.md
 ```
 
 ---
@@ -193,9 +188,9 @@ El siguiente problema:
 ```
 █████████████████████████████████████████████
 █                                           █
-█   un repo que nadie entiende             █
-█   no es misterioso.                      █
-█   es invisible.                          █
+█   un repo que nadie entiende              █
+█   no es misterioso.                       █
+█   necesita un mejor mapa.                 █
 █                                           █
 █████████████████████████████████████████████
 ```
