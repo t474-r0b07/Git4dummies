@@ -170,7 +170,7 @@ El siguiente problema es de escala:
 y que siempre vas a olvidar hacer en el peor momento posible?
 
 ```
-→ siguiente: 07_automatizacion.md
+→ siguiente: 09_automatizacion.md
 ```
 
 ---
